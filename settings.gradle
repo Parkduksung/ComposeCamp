@@ -14,3 +14,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "ComposeCamp"
 include ':app'
+include ':beginner'
+include ':advanced'
