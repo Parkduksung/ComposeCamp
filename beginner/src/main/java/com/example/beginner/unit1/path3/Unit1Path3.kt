@@ -30,10 +30,9 @@ class Unit1Path3 : ComponentActivity() {
 
 @Composable
 fun BirthdayGreetingWithText(message: String, from: String) {
-    Column {
+    Column() {
         Text(text = message, fontSize = 36.sp)
         Text(text = from, fontSize = 24.sp)
-
     }
 }
 
