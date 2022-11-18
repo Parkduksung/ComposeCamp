@@ -16,11 +16,11 @@ import androidx.compose.ui.unit.sp
 import com.example.beginner.BaseActivity
 import com.example.beginner.R
 
-class Unit1Path5 : BaseActivity() {
+class ArticleActivity : BaseActivity() {
 
     @Composable
     override fun InitSetContent(vararg block: @Composable () -> Unit) {
-
+        Article()
     }
 
 }
