@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ComposeCamp">
         <activity
-            android:name=".unit1.path4.Unit1Path4"
+            android:name=".unit2.path2.Unit2Path2"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.ComposeCamp">
