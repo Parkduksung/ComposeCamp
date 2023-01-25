@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.beginner.R
+import com.example.beginner.util.Quadruple
 
 
 class Unit2Path4 : ComponentActivity() {
@@ -34,7 +35,6 @@ class Unit2Path4 : ComponentActivity() {
     }
 }
 
-
 @Composable
 fun LemonApp() {
 
@@ -43,33 +43,48 @@ fun LemonApp() {
     var squeezeCount by remember { mutableStateOf(0) }
 
 
-    val stepToTextAndImage : (Int) -> Triple<Int,Int,Int> = {step ->
-        when(step) {
-            1 -> { Triple(R.string.lemon_select,R.drawable.lemon_tree,R.string.lemon_tree_content_description) }
-            2 -> { Triple(R.string.lemon_squeeze,R.drawable.lemon_squeeze,R.string.lemon_content_description) }
-            3 -> { Triple(R.string.lemon_drink,R.drawable.lemon_drink,R.string.lemonade_content_description) }
-            else -> { Triple(R.string.lemon_empty_glass,R.drawable.lemon_restart,R.string.empty_glass_content_description) }
-        }
-    }
-
-    val stepToClick : (Int) -> Unit = {step ->
-        when(step){
+    val stepToTextAndImage: (Int) -> Quadruple<Int, Int, Int, () -> Unit> = { step ->
+        when (step) {
             1 -> {
-                currentStep = 2
-                squeezeCount = (2..4).random()
+                Quadruple(
+                    R.string.lemon_select,
+                    R.drawable.lemon_tree,
+                    R.string.lemon_tree_content_description,
+                ) {
+                    currentStep = 2
+                    squeezeCount = (2..4).random()
+                }
             }
             2 -> {
-                if (squeezeCount == 0) {
-                    currentStep = 3
-                }else{
-                    squeezeCount--
+                Quadruple(
+                    R.string.lemon_squeeze,
+                    R.drawable.lemon_squeeze,
+                    R.string.lemon_content_description
+                ) {
+                    if (squeezeCount == 0) {
+                        currentStep = 3
+                    } else {
+                        squeezeCount--
+                    }
                 }
             }
             3 -> {
-                currentStep = 4
+                Quadruple(
+                    R.string.lemon_drink,
+                    R.drawable.lemon_drink,
+                    R.string.lemonade_content_description
+                ) {
+                    currentStep = 4
+                }
             }
-            4 -> {
-                currentStep = 1
+            else -> {
+                Quadruple(
+                    R.string.lemon_empty_glass,
+                    R.drawable.lemon_restart,
+                    R.string.empty_glass_content_description
+                ) {
+                    currentStep = 1
+                }
             }
         }
     }
@@ -79,16 +94,14 @@ fun LemonApp() {
         color = MaterialTheme.colors.background
     ) {
         LemonTextAndImage(
-            stepToTextAndImage(currentStep),
-            onImageClick = { stepToClick(currentStep) }
+            stepToTextAndImage(currentStep)
         )
     }
 }
 
 @Composable
 fun LemonTextAndImage(
-    textAndDrawableAndContentDescription : Triple<Int,Int,Int>,
-    onImageClick: () -> Unit,
+    textAndDrawableAndContentDescription: Quadruple<Int, Int, Int, () -> Unit>,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -107,7 +120,7 @@ fun LemonTextAndImage(
             modifier = Modifier
                 .wrapContentSize()
                 .clickable(
-                    onClick = onImageClick
+                    onClick = textAndDrawableAndContentDescription.fourth
                 )
                 .border(
                     BorderStroke(2.dp, Color(105, 205, 216)),
