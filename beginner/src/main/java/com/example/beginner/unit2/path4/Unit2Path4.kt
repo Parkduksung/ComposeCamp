@@ -1,6 +1,7 @@
 package com.example.beginner.unit2.path4
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -38,89 +39,92 @@ class Unit2Path4 : ComponentActivity() {
 @Composable
 fun LemonApp() {
 
-    var currentStep by remember { mutableStateOf(1) }
-
-    var squeezeCount by remember { mutableStateOf(0) }
-
-
-    val stepToTextAndImage: (Int) -> Quadruple<Int, Int, Int, () -> Unit> = { step ->
-        when (step) {
-            1 -> {
-                Quadruple(
-                    R.string.lemon_select,
-                    R.drawable.lemon_tree,
-                    R.string.lemon_tree_content_description,
-                ) {
-                    currentStep = 2
-                    squeezeCount = (2..4).random()
-                }
-            }
-            2 -> {
-                Quadruple(
-                    R.string.lemon_squeeze,
-                    R.drawable.lemon_squeeze,
-                    R.string.lemon_content_description
-                ) {
-                    if (squeezeCount == 0) {
-                        currentStep = 3
-                    } else {
-                        squeezeCount--
-                    }
-                }
-            }
-            3 -> {
-                Quadruple(
-                    R.string.lemon_drink,
-                    R.drawable.lemon_drink,
-                    R.string.lemonade_content_description
-                ) {
-                    currentStep = 4
-                }
-            }
-            else -> {
-                Quadruple(
-                    R.string.lemon_empty_glass,
-                    R.drawable.lemon_restart,
-                    R.string.empty_glass_content_description
-                ) {
-                    currentStep = 1
-                }
-            }
-        }
-    }
+    val state = remember { mutableStateOf(LemonAppState()) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colors.background
     ) {
         LemonTextAndImage(
-            stepToTextAndImage(currentStep)
+            step = state.value.currentStep,
+            onStepChanged = { state.value = state.value.copy(currentStep = it) },
+            squeezeCount = state.value.squeezeCount,
+            onSqueezeCountChanged = { state.value = state.value.copy(squeezeCount = it) }
         )
     }
 }
 
+data class LemonAppState(var currentStep: Int = 1, var squeezeCount: Int = 0)
+
+
 @Composable
 fun LemonTextAndImage(
-    textAndDrawableAndContentDescription: Quadruple<Int, Int, Int, () -> Unit>,
-    modifier: Modifier = Modifier
+    step: Int,
+    onStepChanged: (Int) -> Unit,
+    squeezeCount: Int,
+    onSqueezeCountChanged: (Int) -> Unit
 ) {
+
+    val (text, image, contentDescription, nextStep) = when (step) {
+        1 -> Quadruple(
+            R.string.lemon_select,
+            R.drawable.lemon_tree,
+            R.string.lemon_tree_content_description
+        ) {
+            onStepChanged(2)
+            onSqueezeCountChanged((2..4).random())
+        }
+        2 -> {
+            Quadruple(
+                R.string.lemon_squeeze,
+                R.drawable.lemon_squeeze,
+                R.string.lemon_content_description
+            ) {
+                if (squeezeCount == 0) {
+                    onStepChanged(3)
+                } else {
+                    onSqueezeCountChanged(squeezeCount - 1)
+                }
+            }
+        }
+        3 -> {
+            Quadruple(
+                R.string.lemon_drink,
+                R.drawable.lemon_drink,
+                R.string.lemonade_content_description
+            ) {
+                onStepChanged(4)
+            }
+        }
+        else -> {
+            Quadruple(
+                R.string.lemon_empty_glass,
+                R.drawable.lemon_restart,
+                R.string.empty_glass_content_description
+            ) {
+                onStepChanged(1)
+            }
+        }
+    }
+
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         Text(
-            text = stringResource(textAndDrawableAndContentDescription.first),
+            text = stringResource(text),
             fontSize = 18.sp
         )
         Spacer(modifier = Modifier.height(16.dp))
         Image(
-            painter = painterResource(textAndDrawableAndContentDescription.second),
-            contentDescription = stringResource(textAndDrawableAndContentDescription.third),
+            painter = painterResource(image),
+            contentDescription = stringResource(contentDescription),
             modifier = Modifier
                 .wrapContentSize()
                 .clickable(
-                    onClick = textAndDrawableAndContentDescription.fourth
+                    onClick = nextStep
                 )
                 .border(
                     BorderStroke(2.dp, Color(105, 205, 216)),
