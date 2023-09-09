@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         gradlePluginPortal()
         google()
@@ -13,7 +14,7 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "ComposeCamp"
-include ':app'
-include ':beginner'
-include ':advanced'
-include ':composebook1'
+include(":app")
+include(":beginner")
+include(":advanced")
+include(":composebook1")
