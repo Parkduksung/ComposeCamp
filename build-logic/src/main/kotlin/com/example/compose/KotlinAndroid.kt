@@ -4,6 +4,7 @@ package com.example.compose
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -17,7 +18,7 @@ internal fun Project.configureKotlinAndroid() {
         compileSdk = 33
 
         defaultConfig {
-            minSdk = 24
+            minSdk = 26
 
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
             vectorDrawables {
@@ -44,6 +45,11 @@ internal fun Project.configureKotlinAndroid() {
 
     configureKotlin()
 
+    val libs = extensions.libs
+
+    dependencies {
+        add("coreLibraryDesugaring", libs.findLibrary("android.desugarJdkLibs").get())
+    }
 }
 
 internal fun Project.configureKotlin() {

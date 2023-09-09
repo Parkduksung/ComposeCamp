@@ -15,11 +15,19 @@ internal fun Project.configureComposeAndroid() {
         }
         
         dependencies {
+
+            add("implementation", libs.findLibrary("androidx.core.ktx").get())
+            add("implementation", libs.findLibrary("androidx.activity.compose").get())
+            add("implementation", libs.findLibrary("androidx.lifecycle").get())
+
             val bom = libs.findLibrary("androidx-compose-bom").get()
             add("implementation", platform(bom))
             add("androidTestImplementation", platform(bom))
             
             add("implementation", libs.findLibrary("androidx.compose.material3").get())
+            add("implementation", libs.findLibrary("androidx.compose.material").get())
+            add("implementation", libs.findLibrary("androidx.compose.material.icons.core").get())
+            add("implementation", libs.findLibrary("androidx.compose.material.icons.extended").get())
             add("implementation", libs.findLibrary("androidx.compose.ui").get())
             add("implementation", libs.findLibrary("androidx.compose.ui.tooling.preview").get())
             add("androidTestImplementation", libs.findLibrary("androidx.test.ext").get())
