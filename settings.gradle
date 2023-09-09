@@ -16,3 +16,4 @@ rootProject.name = "ComposeCamp"
 include ':app'
 include ':beginner'
 include ':advanced'
+include ':composebook1'
